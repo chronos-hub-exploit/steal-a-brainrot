@@ -1,17 +1,22 @@
+-- Optimiertes Mobile GUI für Luau KRNL - Chronos Hub
+-- Breitformat mit nebeneinander liegenden Buttons
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local TextService = game:GetService("TextService")
 
 local player = Players.LocalPlayer
-local isMobile = UserInputService.TouchEnabl
+local isMobile = UserInputService.TouchEnabled
+
+-- Haupt-GUI erstellen
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ChronosHubMobile"
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = player.PlayerGui
 
-
+-- Bildschirmgröße für Anpassungen
 local screenSize = workspace.CurrentCamera.ViewportSize
 
 -- Breiteres, aber niedrigeres Format für Mobile
