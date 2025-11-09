@@ -1,0 +1,376 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local TextService = game:GetService("TextService")
+
+local player = Players.LocalPlayer
+local isMobile = UserInputService.TouchEnabl
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ChronosHubMobile"
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = player.PlayerGui
+
+
+local screenSize = workspace.CurrentCamera.ViewportSize
+
+-- Breiteres, aber niedrigeres Format für Mobile
+local frameWidth = math.min(380, screenSize.X - 40)
+local frameHeight = 280  -- Reduzierte Höhe
+
+-- Hauptframe
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, frameWidth, 0, frameHeight)
+MainFrame.Position = UDim2.new(0.5, -frameWidth/2, 0.5, -frameHeight/2)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+MainFrame.BorderSizePixel = 0
+MainFrame.ClipsDescendants = true
+MainFrame.Parent = ScreenGui
+
+-- Abgerundete Ecken
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 16)
+UICorner.Parent = MainFrame
+
+-- Schatten
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Color = Color3.fromRGB(60, 60, 70)
+UIStroke.Thickness = 3
+UIStroke.Parent = MainFrame
+
+-- Schließen-Button
+local CloseButton = Instance.new("TextButton")
+CloseButton.Name = "CloseButton"
+CloseButton.Size = UDim2.new(0, 35, 0, 35)
+CloseButton.Position = UDim2.new(1, -40, 0, 8)
+CloseButton.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Text = "X"
+CloseButton.TextSize = 18
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.BorderSizePixel = 0
+CloseButton.Parent = MainFrame
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 8)
+CloseCorner.Parent = CloseButton
+
+-- Titel
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Name = "TitleLabel"
+TitleLabel.Size = UDim2.new(1, -50, 0, 50)
+TitleLabel.Position = UDim2.new(0, 25, 0, 0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "Chronos Hub"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 26
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.Parent = MainFrame
+
+-- Untertitel
+local SubtitleLabel = Instance.new("TextLabel")
+SubtitleLabel.Name = "SubtitleLabel"
+SubtitleLabel.Size = UDim2.new(1, -50, 0, 20)
+SubtitleLabel.Position = UDim2.new(0, 25, 0, 50)
+SubtitleLabel.BackgroundTransparency = 1
+SubtitleLabel.Text = "Premium Script Hub"
+SubtitleLabel.TextColor3 = Color3.fromRGB(180, 180, 190)
+SubtitleLabel.TextSize = 14
+SubtitleLabel.Font = Enum.Font.Gotham
+SubtitleLabel.Parent = MainFrame
+
+-- Key-Eingabefeld
+local KeyEntryFrame = Instance.new("Frame")
+KeyEntryFrame.Name = "KeyEntryFrame"
+KeyEntryFrame.Size = UDim2.new(0, frameWidth - 40, 0, 45)
+KeyEntryFrame.Position = UDim2.new(0.5, -(frameWidth - 40)/2, 0, 90)
+KeyEntryFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+KeyEntryFrame.BorderSizePixel = 0
+KeyEntryFrame.Parent = MainFrame
+
+local KeyEntryCorner = Instance.new("UICorner")
+KeyEntryCorner.CornerRadius = UDim.new(0, 10)
+KeyEntryCorner.Parent = KeyEntryFrame
+
+local KeyEntryBox = Instance.new("TextBox")
+KeyEntryBox.Name = "KeyEntryBox"
+KeyEntryBox.Size = UDim2.new(1, -20, 1, 0)
+KeyEntryBox.Position = UDim2.new(0, 10, 0, 0)
+KeyEntryBox.BackgroundTransparency = 1
+KeyEntryBox.Text = ""
+KeyEntryBox.PlaceholderText = "Enter your key here..."
+KeyEntryBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 130)
+KeyEntryBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyEntryBox.TextSize = 16
+KeyEntryBox.Font = Enum.Font.Gotham
+KeyEntryBox.TextXAlignment = Enum.TextXAlignment.Left
+KeyEntryBox.Parent = KeyEntryFrame
+
+-- Button-Container für nebeneinander liegende Buttons
+local ButtonContainer = Instance.new("Frame")
+ButtonContainer.Name = "ButtonContainer"
+ButtonContainer.Size = UDim2.new(0, frameWidth - 40, 0, 45)
+ButtonContainer.Position = UDim2.new(0.5, -(frameWidth - 40)/2, 0, 150)
+ButtonContainer.BackgroundTransparency = 1
+ButtonContainer.Parent = MainFrame
+
+-- Get Key Button (links)
+local GetKeyButton = Instance.new("TextButton")
+GetKeyButton.Name = "GetKeyButton"
+GetKeyButton.Size = UDim2.new(0.48, 0, 1, 0)
+GetKeyButton.Position = UDim2.new(0, 0, 0, 0)
+GetKeyButton.BackgroundColor3 = Color3.fromRGB(80, 120, 200)
+GetKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+GetKeyButton.Text = "Get Key"
+GetKeyButton.TextSize = 18
+GetKeyButton.Font = Enum.Font.GothamBold
+GetKeyButton.BorderSizePixel = 0
+GetKeyButton.Parent = ButtonContainer
+
+local GetKeyCorner = Instance.new("UICorner")
+GetKeyCorner.CornerRadius = UDim.new(0, 8)
+GetKeyCorner.Parent = GetKeyButton
+
+-- Check Key Button (rechts)
+local CheckKeyButton = Instance.new("TextButton")
+CheckKeyButton.Name = "CheckKeyButton"
+CheckKeyButton.Size = UDim2.new(0.48, 0, 1, 0)
+CheckKeyButton.Position = UDim2.new(0.52, 0, 0, 0)
+CheckKeyButton.BackgroundColor3 = Color3.fromRGB(60, 160, 100)
+CheckKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CheckKeyButton.Text = "Check Key"
+CheckKeyButton.TextSize = 18
+CheckKeyButton.Font = Enum.Font.GothamBold
+CheckKeyButton.BorderSizePixel = 0
+CheckKeyButton.Parent = ButtonContainer
+
+local CheckKeyCorner = Instance.new("UICorner")
+CheckKeyCorner.CornerRadius = UDim.new(0, 8)
+CheckKeyCorner.Parent = CheckKeyButton
+
+-- Status Text (unter den Buttons)
+local StatusText = Instance.new("TextLabel")
+StatusText.Name = "StatusText"
+StatusText.Size = UDim2.new(0, frameWidth - 40, 0, 20)
+StatusText.Position = UDim2.new(0.5, -(frameWidth - 40)/2, 0, 205)
+StatusText.BackgroundTransparency = 1
+StatusText.Text = ""
+StatusText.TextColor3 = Color3.fromRGB(100, 200, 100)
+StatusText.TextSize = 14
+StatusText.Font = Enum.Font.Gotham
+StatusText.Visible = false
+StatusText.Parent = MainFrame
+
+-- Popup für "Nicht unterstützt"
+local PopupFrame = Instance.new("Frame")
+PopupFrame.Name = "PopupFrame"
+PopupFrame.Size = UDim2.new(0, 320, 0, 160)
+PopupFrame.Position = UDim2.new(0.5, -160, 0.5, -80)
+PopupFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+PopupFrame.BorderSizePixel = 0
+PopupFrame.Visible = false
+PopupFrame.ZIndex = 10
+PopupFrame.Parent = ScreenGui
+
+local PopupCorner = Instance.new("UICorner")
+PopupCorner.CornerRadius = UDim.new(0, 12)
+PopupCorner.Parent = PopupFrame
+
+local PopupStroke = Instance.new("UIStroke")
+PopupStroke.Color = Color3.fromRGB(80, 80, 90)
+PopupStroke.Thickness = 2
+PopupStroke.Parent = PopupFrame
+
+local PopupTitle = Instance.new("TextLabel")
+PopupTitle.Name = "PopupTitle"
+PopupTitle.Size = UDim2.new(1, 0, 0, 50)
+PopupTitle.Position = UDim2.new(0, 0, 0, 0)
+PopupTitle.BackgroundTransparency = 1
+PopupTitle.Text = "Error"
+PopupTitle.TextColor3 = Color3.fromRGB(220, 80, 80)
+PopupTitle.TextSize = 22
+PopupTitle.Font = Enum.Font.GothamBold
+PopupTitle.Parent = PopupFrame
+
+local PopupMessage = Instance.new("TextLabel")
+PopupMessage.Name = "PopupMessage"
+PopupMessage.Size = UDim2.new(1, -20, 0, 60)
+PopupMessage.Position = UDim2.new(0, 10, 0, 50)
+PopupMessage.BackgroundTransparency = 1
+PopupMessage.Text = "This Script is not supported with your Executer"
+PopupMessage.TextColor3 = Color3.fromRGB(255, 255, 255)
+PopupMessage.TextSize = 16
+PopupMessage.Font = Enum.Font.Gotham
+PopupMessage.TextWrapped = true
+PopupMessage.Parent = PopupFrame
+
+local PopupCloseButton = Instance.new("TextButton")
+PopupCloseButton.Name = "PopupCloseButton"
+PopupCloseButton.Size = UDim2.new(0, 120, 0, 35)
+PopupCloseButton.Position = UDim2.new(0.5, -60, 1, -45)
+PopupCloseButton.BackgroundColor3 = Color3.fromRGB(220, 80, 80)
+PopupCloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+PopupCloseButton.Text = "Close"
+PopupCloseButton.TextSize = 16
+PopupCloseButton.Font = Enum.Font.GothamBold
+PopupCloseButton.BorderSizePixel = 0
+PopupCloseButton.Parent = PopupFrame
+
+local PopupCloseCorner = Instance.new("UICorner")
+PopupCloseCorner.CornerRadius = UDim.new(0, 8)
+PopupCloseCorner.Parent = PopupCloseButton
+
+-- Animationen
+local function tweenIn()
+    MainFrame.Size = UDim2.new(0, 0, 0, 0)
+    MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    
+    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+    local tween = TweenService:Create(MainFrame, tweenInfo, {
+        Size = UDim2.new(0, frameWidth, 0, frameHeight), 
+        Position = UDim2.new(0.5, -frameWidth/2, 0.5, -frameHeight/2)
+    })
+    tween:Play()
+end
+
+local function tweenOut(callback)
+    local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    local tween = TweenService:Create(MainFrame, tweenInfo, {
+        Size = UDim2.new(0, 0, 0, 0), 
+        Position = UDim2.new(0.5, 0, 0.5, 0)
+    })
+    tween:Play()
+    
+    if callback then
+        tween.Completed:Connect(callback)
+    end
+end
+
+local function showPopup()
+    PopupFrame.Size = UDim2.new(0, 0, 0, 0)
+    PopupFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    PopupFrame.Visible = true
+    
+    local tweenInfo = TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+    local tween = TweenService:Create(PopupFrame, tweenInfo, {
+        Size = UDim2.new(0, 320, 0, 160), 
+        Position = UDim2.new(0.5, -160, 0.5, -80)
+    })
+    tween:Play()
+end
+
+local function hidePopup()
+    local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+    local tween = TweenService:Create(PopupFrame, tweenInfo, {
+        Size = UDim2.new(0, 0, 0, 0), 
+        Position = UDim2.new(0.5, 0, 0.5, 0)
+    })
+    tween:Play()
+    
+    tween.Completed:Connect(function()
+        PopupFrame.Visible = false
+    end)
+end
+
+-- Korrigierte Funktionen
+local function copyToClipboard()
+    -- Verwende pcall für bessere Fehlerbehandlung
+    local success, errorMsg = pcall(function()
+        if setclipboard then
+            setclipboard("https://linkvertise.com/1436931/ypZrC6T1TlIf")
+            StatusText.Text = "Copied to clipboard!"
+            StatusText.TextColor3 = Color3.fromRGB(100, 200, 100)
+        else
+            -- Fallback für Executer ohne setclipboard
+            StatusText.Text = "Link: https://linkvertise.com/1436931/ypZrC6T1TlIf"
+            StatusText.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end
+    end)
+    
+    if not success then
+        -- Alternative Methode falls setclipboard nicht verfügbar
+        StatusText.Text = "Link: https://linkvertise.com/1436931/ypZrC6T1TlIf"
+        StatusText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
+    
+    StatusText.Visible = true
+    wait(3)
+    StatusText.Visible = false
+end
+
+local function checkKey()
+    local enteredKey = KeyEntryBox.Text:gsub("%s+", "")  -- Leerzeichen entfernen
+    local validKey = "ce9c-127d-160a-28fe"
+    
+    StatusText.Visible = false
+    
+    if enteredKey == "" then
+        StatusText.Text = "Enter a Key"
+        StatusText.TextColor3 = Color3.fromRGB(220, 80, 80)
+        StatusText.Visible = true
+    elseif enteredKey == validKey then
+        StatusText.Text = "Key is valid"
+        StatusText.TextColor3 = Color3.fromRGB(100, 200, 100)
+        StatusText.Visible = true
+        
+        -- Warte 1,5 Sekunden wie gewünscht
+        wait(1.5)
+        
+        -- Alles bleibt stehen für 0,3 Sekunden
+        wait(0.3)
+        
+        -- Hauptmenü ausblenden und Popup anzeigen
+        tweenOut(function()
+            showPopup()
+        end)
+    else
+        StatusText.Text = "Invalid Key"
+        StatusText.TextColor3 = Color3.fromRGB(220, 80, 80)
+        StatusText.Visible = true
+    end
+end
+
+local function closeGUI()
+    tweenOut(function()
+        ScreenGui:Destroy()
+    end)
+end
+
+local function closePopup()
+    hidePopup()
+end
+
+-- Event-Handler
+GetKeyButton.MouseButton1Click:Connect(copyToClipboard)
+CheckKeyButton.MouseButton1Click:Connect(checkKey)
+CloseButton.MouseButton1Click:Connect(closeGUI)
+PopupCloseButton.MouseButton1Click:Connect(closePopup)
+
+-- Touch-optimierte Effekte
+local function addTouchEffect(button, normalColor, pressedColor)
+    local function onPress()
+        local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local tween = TweenService:Create(button, tweenInfo, {BackgroundColor3 = pressedColor})
+        tween:Play()
+    end
+    
+    local function onRelease()
+        local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local tween = TweenService:Create(button, tweenInfo, {BackgroundColor3 = normalColor})
+        tween:Play()
+    end
+    
+    button.MouseButton1Down:Connect(onPress)
+    button.MouseButton1Up:Connect(onRelease)
+    button.MouseLeave:Connect(onRelease)
+end
+
+-- Effekte hinzufügen
+addTouchEffect(GetKeyButton, Color3.fromRGB(80, 120, 200), Color3.fromRGB(70, 110, 190))
+addTouchEffect(CheckKeyButton, Color3.fromRGB(60, 160, 100), Color3.fromRGB(50, 150, 90))
+addTouchEffect(CloseButton, Color3.fromRGB(40, 40, 45), Color3.fromRGB(50, 50, 55))
+addTouchEffect(PopupCloseButton, Color3.fromRGB(220, 80, 80), Color3.fromRGB(200, 60, 60))
+
+-- GUI starten
+tweenIn()
